@@ -1,6 +1,7 @@
 import { consola } from "consola";
 // import { execa } from "execa";
 import { existsSync } from "fs";
+import { eta } from "../../../../eta.js";
 import {
   addPackageToConfig,
   createFile,
@@ -48,6 +49,7 @@ const manualInstallShadCn = async (
 
   addToInstallList({
     regular: [
+      "@tanstack/react-table",
       "tailwindcss-animate",
       "class-variance-authority",
       "clsx",
@@ -87,6 +89,16 @@ const manualInstallShadCn = async (
   createFile(
     rootPath.concat("components/ui/ThemeToggle.tsx"),
     generateThemeToggler()
+  );
+
+  // generate base Data Table
+  createFile(
+    rootPath.concat("components/ui/DataTable/index.tsx"),
+    eta.render("DataTable/index.eta", {})
+  );
+  createFile(
+    rootPath.concat("components/ui/DataTable/pagination.tsx"),
+    eta.render("DataTable/pagination.eta", {})
   );
   // add context provider to layout
   addContextProviderToRootLayout("ThemeProvider");
@@ -135,6 +147,8 @@ export const installShadcnUI = async (
   //   "label",
   // ]);
   addToShadcnComponentList([
+    "table",
+    "pagination",
     "button",
     "sonner",
     "avatar",

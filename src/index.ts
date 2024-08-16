@@ -20,6 +20,7 @@ addCommonOptions(program.command("init"))
 
 program
   .command("generate")
+  .alias("g")
   .description("Generate a new resource")
   .option("-f, --from-file <value>", "load schema from a JSON file")
   .action(buildSchema);

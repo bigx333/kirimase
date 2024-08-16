@@ -55,7 +55,9 @@ import { env } from "${formatFilePath(envMjs, {
 export default {
   schema: "./${libPath}/db/schema",
   dialect: "${configDriverDialect[provider]}",
-  out: "./${libPath}/db/migrations",${provider === "turso" ? `\n  driver: "turso",` : ""}
+  out: "./${libPath}/db/migrations",${
+      provider === "turso" ? `\n  driver: "turso",` : ""
+    }
   dbCredentials: {
     ${
       provider === "turso"
@@ -111,7 +113,7 @@ import { env } from "${formatFilePath(envMjs, {
       })}";
 
 neonConfig.fetchConnectionCache = true;
- 
+
 export const sql: NeonQueryFunction<boolean, boolean> = neon(env.DATABASE_URL);
 export const db = drizzle(sql);
 `;
@@ -123,7 +125,7 @@ import { env } from "${formatFilePath(envMjs, {
         removeExtension: false,
         prefix: "alias",
       })}";
-  
+
 export const db = drizzle(sql)
 `;
       break;
@@ -134,7 +136,7 @@ import { env } from "${formatFilePath(envMjs, {
         removeExtension: false,
         prefix: "alias",
       })}";
- 
+
 const connectionString = env.DATABASE_URL
 const client = postgres(connectionString)
 export const db = drizzle(client);
@@ -146,12 +148,12 @@ import { RDSDataClient } from '@aws-sdk/client-rds-data';
 import { fromIni } from '@aws-sdk/credential-providers';
 import "dotenv/config";
 
- 
+
 const rdsClient = new RDSDataClient({
   	credentials: fromIni({ profile: env['PROFILE'] }),
 		region: 'us-east-1',
 });
- 
+
 export const db = drizzle(rdsClient, {
   database: env['DATABASE']!,
   secretArn: env['SECRET_ARN']!,
@@ -166,12 +168,12 @@ import { env } from "${formatFilePath(envMjs, {
         removeExtension: false,
         prefix: "alias",
       })}";
- 
+
 // create the connection
 export const connection = connect({
   url: env.DATABASE_URL
 });
- 
+
 export const db = drizzle(connection);
 `;
       break;
@@ -182,16 +184,16 @@ import { env } from "${formatFilePath(envMjs, {
         removeExtension: false,
         prefix: "alias",
       })}";
- 
+
 export const poolConnection = mysql.createPool(env.DATABASE_URL);
- 
+
 export const db = drizzle(poolConnection);
 `;
       break;
     case "better-sqlite3":
       indexTS = `import { drizzle, BetterSQLite3Database } from 'drizzle-orm/better-sqlite3';
 import Database from 'better-sqlite3';
- 
+
 export const sqlite = new Database('sqlite.db');
 export const db: BetterSQLite3Database = drizzle(sqlite);
 `;
@@ -203,7 +205,7 @@ import { env } from "${formatFilePath(envMjs, {
         removeExtension: false,
         prefix: "alias",
       })}";
- 
+
 export const sqlite = createClient({
   url: env.DATABASE_URL,
   authToken: env.DATABASE_AUTH_TOKEN,
@@ -283,7 +285,7 @@ import { neon, neonConfig, NeonQueryFunction } from '@neondatabase/serverless';
 `;
       connectionLogic = `
 neonConfig.fetchConnectionCache = true;
- 
+
 const sql: NeonQueryFunction<boolean, boolean> = neon(env.DATABASE_URL);
 const db = drizzle(sql);
 `;
@@ -324,7 +326,7 @@ const rdsClient = new RDSDataClient({
   	credentials: fromIni({ profile: process.env['PROFILE'] }),
 		region: 'us-east-1',
 });
- 
+
 const db = drizzle(rdsClient, {
   database: process.env['DATABASE']!,
   secretArn: process.env['SECRET_ARN']!,
@@ -341,7 +343,7 @@ import { connect } from "@planetscale/database";
 `;
       connectionLogic = `
 const connection = connect({ url: env.DATABASE_URL });
- 
+
 const db = drizzle(connection);
 `;
       break;
@@ -787,10 +789,10 @@ export const createComputer = async (computer: NewComputer) => {
     ${
       driver === "mysql" ? "" : "const [c] = "
     } await db.insert(computers).values(newComputer)${
-      driver === "mysql"
-        ? "\n    return { success: true }"
-        : ".returning();\n    return { computer: c }"
-    }
+    driver === "mysql"
+      ? "\n    return { success: true }"
+      : ".returning();\n    return { computer: c }"
+  }
   } catch (err) {
     const message = (err as Error).message ?? "Error, please try again";
     console.error(message);
@@ -823,10 +825,10 @@ export const deleteComputer = async (id: ComputerId) => {
     ${
       driver === "mysql" ? "" : "const [c] = "
     }await db.delete(computers).where(eq(computers.id, computerId!))${
-      driver === "mysql"
-        ? "\n    return { success: true };"
-        : ".returning();\n    return { computer: c };"
-    }
+    driver === "mysql"
+      ? "\n    return { success: true };"
+      : ".returning();\n    return { computer: c };"
+  }
   } catch (err) {
     const message = (err as Error).message ?? "Error, please try again"
     console.error(message);
@@ -867,7 +869,7 @@ export const env = createEnv({
       .enum(["development", "test", "production"])
       .default("development"),
     ${blank ? "// " : ""}DATABASE_URL: z.string().min(1),
-    
+
   },
   client: {
     // NEXT_PUBLIC_PUBLISHABLE_KEY: z.string().min(1),
